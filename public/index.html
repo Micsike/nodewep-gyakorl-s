@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category and Articles</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>Categories</h1>
+  </header>
+  <nav id="menu"></nav>
+  <div id="content">
+    <h2 id="title"></h2>
+    <p id="description"></p>
+  </div>
+
+  <script>
+    async function loadCategories() {
+      const response = await fetch('/api/categories');
+      const categories = await response.json();
+
+      const menu = document.getElementById('menu');
+
+      categories.forEach(category => {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = category.name;
+        link.addEventListener('click', () => loadArticles(category.name, category.title));
+        menu.appendChild(link);
+      });
+    }
+
+    async function loadArticles(categoryName, categoryTitle) {
+      const response = await fetch(`/api/articles/${categoryName}`);
+      const articles = await response.json();
+
+      const title = document.getElementById('title');
+      const description = document.getElementById('description');
+
+      title.textContent = categoryTitle;
+
+      if (articles.length > 0) {
+        description.textContent = articles[0].description;
+      } else {
+        description.textContent = 'No articles found for this category.';
+      }
+    }
+
+    window.onload = loadCategories;
+  </script>
+</body>
+</html>
